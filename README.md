@@ -7,17 +7,21 @@ i2cLEDドライバー、PCA9956のArduino用サンプルコードです。24チ�
 
 [Product page of Switchscience / Switch Scienceの商品ページ](https://www.switch-science.com/catalog/2677/)
 
-##Procedure つなぎ方
+## Procedure つなぎ方
 
 Following is simplified procedure for hooking up the device.
 簡単ですが以下に手順を記載します。
 
-1．Connect the power and i2c wires
-   i2c及び電源を接続
+1．Connect the power and i2c wires / i2c及び電源を接続
+   
   Arduino   PCA9956
+  
   5V        VDD
+  
   GND       GND
+  
   SDA       SDA
+  
   SCL       SCL
 
 2. Add pull up resistors between Vcc and each i2c wires (SDA / SCL).
@@ -28,7 +32,7 @@ Following is simplified procedure for hooking up the device.
 
    スケッチをアップロード
 
-##Resistor Setting レジスタの設定
+## Resistor Setting レジスタの設定
 
 As you can see on the code, I did only on/off control, however the IC can control PWM all channels individually (and much more). The resistor settign precedure for On/Off control is like this.
 
