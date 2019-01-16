@@ -2,6 +2,7 @@
 This is I2C controlled LED driver PCA9956's sample code for Arduino. The chips is capable to handle 24 channels of LEDs, however there is almost NO sample code nor information except an incomplehensible datasheet. So I hope this code can help someone who are struggling now to understand this guy. I have tested this code with Switchscience's breakout board. I implemented i2c address auto scan, but if you want to chain other devices on the i2c, you need to set up DEV_ADDRESS and disable auto scan function. When all three address setting is open state, the i2c address will be 0x3F (On the datasheet you can find the address as 0x7E, but 0x3F was correct number we need to pass to the wire library). 
 
 i2cLEDドライバー、PCA9956のArduino用サンプルコードです。24チャンネル制御できるとても便利なICなのですが、サンプルコードが全然見つからず、データシートもとても分かりにくいものでしたので、ご参考になればと思います。スイッチサイエンス製の評価ボードにて動作を確認しています。i2cアドレスは起動時に自動スキャンするようにしていますが、アドレス設定ピン3本すべてオープン（未接続）の場合は、Ox3Fです。他にもデバイスを接続する場合はDEV_ADDRESSのコメントを消してアドレスを設定してください。（データシート上では0x7Eと表記がありますが、対応するHEXの欄の0x3Fを設定する必要があります。）
+
 [Device data-sheet / デバイスのデータシートはこちら](https://www.nxp.com/docs/en/data-sheet/PCA9956B.pdf)
 
 [Product page of Switchscience / Switch Scienceの商品ページ](https://www.switch-science.com/catalog/2677/)
