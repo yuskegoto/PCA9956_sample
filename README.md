@@ -8,6 +8,7 @@ i2cLEDドライバー、PCA9956のArduino用サンプルコードです。24チ�
 [Product page of Switchscience / Switch Scienceの商品ページ](https://www.switch-science.com/catalog/2677/)
 
 ##Procedure つなぎ方
+
 Following is simplified procedure for hooking up the device.
 簡単ですが以下に手順を記載します。
 
@@ -28,6 +29,7 @@ Following is simplified procedure for hooking up the device.
    スケッチをアップロード
 
 ##Resistor Setting レジスタの設定
+
 As you can see on the code, I did only on/off control, however the IC can control PWM all channels individually (and much more). The resistor settign precedure for On/Off control is like this.
 
 コードを見て頂ければわかりますが、今回はON/OFF制御のみやっております。ただしチャンネルごとにPWM制御（更にもっといろんなことも）も可能です。ON/OFF制御の場合の設定手順は以下となります。
