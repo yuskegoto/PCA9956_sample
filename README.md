@@ -33,18 +33,25 @@ As you can see on the code, I did only on/off control, however the IC can contro
 コードを見て頂ければわかりますが、今回はON/OFF制御のみやっております。ただしチャンネルごとにPWM制御（更にもっといろんなことも）も可能です。ON/OFF制御の場合の設定手順は以下となります。
 
 1. Set up MODE1(Ox00) resistor
+
    MODE1(0x00)レジスタを設定
+   
 2. Set up output mode setting LEDOUT0-5(0x02 - 0x7). One resistor has 4 LED's control state. Therefore one LED has two bits of control state... See the datasheet page 17. 
 
    LEDOUT0-5(0x02 - 0x7) ドライバ出力状態設定。1レジスタにつき4LEDの制御状態が格納される。そのため1LEDにつき2ビット制御フラグが存在する。データシート17ページ参照
+   
     00: LED driver is off
-    01: LED driver is fully on
-    10: LED driver can be indivisually controlled from PWMx resistor or PWMALL resistor for all control
-    LEDドライバーがPWMxレジスターまたはPWMALLレジスターより制御可能
-    11: LED driver's individual brightness and group's dimming/blinking can be controlled from PWMx or GRPPWM resistors
-    LEDドライバーの輝度及びグループの点滅・ディミングがPWMxレジスターまたはGRPPWMレジスターより制御可能
     
-3. IREF0 - 23(0x22 - 0x39) out put current control/ 出力電流設定
+    01: LED driver is fully on
+    
+    10: LED driver can be indivisually controlled from PWMx resistor or PWMALL resistor for all control
+    
+    LEDドライバーがPWMxレジスターまたはPWMALLレジスターより制御可能
+    
+    11: LED driver's individual brightness and group's dimming/blinking can be controlled from PWMx or GRPPWM resistors
+    LEDドライバーの輝度及びグループの点滅・ディミングがPWMxレジスターまたはGRPPWMレジスターより制御可能   
+    
+3. IREF0 - 23(0x22 - 0x39) out put current control　/ 出力電流設定
 
 This procedure is **not written cleary** on the datasheet. So I guess there are bunch of folks giving up before finding this procedure.
 
