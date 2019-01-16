@@ -14,15 +14,15 @@ Following is simplified procedure for hooking up the device.
 
 1．Connect the power and i2c wires / i2c及び電源を接続
    
-  Arduino   PCA9956
+Arduino   PCA9956
   
-  5V        VDD
+5V        VDD
   
-  GND       GND
+GND       GND
   
-  SDA       SDA
+SDA       SDA
   
-  SCL       SCL
+SCL       SCL
 
 2. Add pull up resistors between Vcc and each i2c wires (SDA / SCL).
 
@@ -65,4 +65,4 @@ This procedure is **not written cleary** on the datasheet. So I guess there are 
 
 Actually I found this procedure from a comment I found on Amazon.jp's product page. Thanks! 
 
-ちなみに私はアマゾンの評価に載っていたコメントでRaspiで設定した人の手順を見てようやく理解しました（ありがとうございます！）。
+ちなみに私はアマゾンの評価に載っていた[コメント](https://www.amazon.co.jp/gp/aw/reviews/B01FJHF760)でRaspiで設定した人の手順を見てようやく理解しました（ありがとうございます！）。
