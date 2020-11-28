@@ -1,143 +1,105 @@
-// Very unfriendly data sheet: https://www.nxp.com/docs/en/data-sheet/PCA9956B.pdf
+// Demo sketch of the LED driver PCA9956.
+// Not so unfriendly data sheet: https://www.nxp.com/docs/en/data-sheet/PCA9956B.pdf
 
+#include <Arduino.h>
 #include <Wire.h>
 
-//PCA9956 registor addresses
-#define MODE1       0x00
-#define MODE2       0x01
-#define PWM0        0x0A
-#define PWM8        0x12
-#define PWM23       0x21
+#include "PCA9956.h"
+#include "Setting.h"
 
-#define GRPPWM      0x0A
-#define GRPFREQ     0x0B
-#define LEDOUT0     0x02
-#define IREF0       0x22
+#define M5ATOM
 
-#define LEDMODE_FULLOFF 0x00                 //full off
-#define LEDMODE_FULLON 0b01010101            //full on
-#define LEDMODE_PWM 0b10101010            //control over pwm
-
-// #define DEV_ADDRESS 0x3F
-
-#define CONTROL_LEDS 24
-#define LED_BRIGHTNESS 0x06
-
-uint8_t devAddress;
-
-void i2cWrite(uint8_t slave_address, uint8_t *data, uint8_t num){
-  Wire.beginTransmission(slave_address);
-  for(int i=0;i<num;i++){
-    Wire.write(*(data+i));
-  }
-  Wire.endTransmission();
-}
-
-#ifndef DEV_ADDRESS
-// i2c scanner taken from here: https://playground.arduino.cc/Main/I2cScanner
-uint8_t i2cScan(){
-  uint8_t foundAddress = 1;
-  for(uint8_t address = 1; address < 127; address++ )
-  {
-    // The i2c_scanner uses the return value of
-    // the Write.endTransmisstion to see if
-    // a device did acknowledge to the address.
-    Wire.beginTransmission(address);
-    uint8_t error = Wire.endTransmission();
- 
-    if (error == 0){
-      Serial.print("\nI2C device found at address 0x");
-      if (address<16)
-        Serial.print("0");
-      Serial.println(address,HEX);
-      foundAddress = address;
-      break;
-    }
-    else if (error==4){
-      Serial.print("Unknown error at address 0x");
-      if (address<16)
-        Serial.print("0");
-      Serial.println(address,HEX);
-    }    
-  }
-  return foundAddress;
-}
+#ifdef M5ATOM
+#include "M5Atom.h"
 #endif
 
-void setLEDPortMode(uint8_t portAdr, uint8_t mode){
-  uint8_t cmd[2];
-  cmd[0] = portAdr;
-  cmd[1] = mode;      //disables all options...
-  i2cWrite(devAddress, cmd, sizeof(cmd));
-}
+// PCA9956 ledDriver(&Wire);
+PCA9956 ledDrivers[2]{{&Wire}, {&Wire}}; // if you have multiple drivers, init this way...
+// PCA9956 ledDrivers[9]{{&Wire}, {&Wire}, {&Wire}, {&Wire}, {&Wire}, {&Wire}, {&Wire}, {&Wire}, {&Wire}}; // if you have multiple drivers, init this way...
 
-void setLEDCurrent(uint8_t portAdr, uint8_t iref){
-  uint8_t cmd[2];
-  cmd[0] = portAdr;
-  cmd[1] = iref;      //disables all options...
-  i2cWrite(devAddress, cmd, sizeof(cmd));
-}
-
-void onLED(uint8_t selectLED){
-  uint8_t regAdr = uint8_t(selectLED/4) + LEDOUT0;
-  uint8_t regVal = 1 << ((selectLED%4) * 2);
-  Serial.print(selectLED);
-  Serial.print(" ");
-  Serial.print(regAdr, HEX);
-  Serial.print(" ");
-  Serial.print(regVal, BIN);
-  Serial.println("");
-  setLEDPortMode(regAdr, regVal);
-
-}
-
-void offLED(uint8_t selectLED){
-  uint8_t regAdr = uint8_t(selectLED/4) + LEDOUT0;
-  uint8_t modeBit = (selectLED%4) * 2;
-  uint8_t regVal = 0b10 << modeBit;
-  setLEDPortMode(regAdr, regVal);
-}
-
-//MODE1 reg setting
-void ledMode1Setting(uint8_t regsetting){
-  uint8_t cmd[2];
-  cmd[0] = MODE1;
-  cmd[1] = regsetting;
-  i2cWrite(devAddress, cmd, 2);
-}
-
-void initLEDdriver(){
-  ledMode1Setting(0x00);       //disables all options...
-
-  //LED out put mode setting
-  for(uint8_t i = 0; i < CONTROL_LEDS; i++){
-    setLEDPortMode(LEDOUT0 + i, LEDMODE_FULLOFF);  // set leds to full on
-    setLEDCurrent(IREF0 + i, LED_BRIGHTNESS);       //set led current
-  }
-}
+#ifdef M5ATOM
+bool blink = false;
+#endif
 
 void setup()
 {
+#ifdef M5ATOM
+  M5.begin(true, false, true);
+  delay(50);
+  M5.dis.drawpix(0, 0x000000);
+#else
   Serial.begin(9600);
-  Serial.flush();
+#endif
 
-  Wire.begin();
-  #ifndef DEV_ADDRESS
-    devAddress = i2cScan();
-  #else
-    devAddress = DEV_ADDRESS;
-  #endif
+  Wire.begin(21, 22); // Wire needs to init separately...
 
-  initLEDdriver();
+  // ledDriver.init(devAddresses1, LED_BRIGHTNESS);
+  ledDrivers[0].init(DEV_ADDRESS2, LED_BRIGHTNESS);
+  ledDrivers[1].init(DEV_ADDRESS1, LED_BRIGHTNESS);
+  // ledDrivers[2].init(DEV_ADDRESS3, LED_BRIGHTNESS);
+  // ledDrivers[3].init(DEV_ADDRESS4, LED_BRIGHTNESS);
+  // ledDrivers[4].init(DEV_ADDRESS5, LED_BRIGHTNESS);
+  // ledDrivers[5].init(DEV_ADDRESS6, LED_BRIGHTNESS);
+  // ledDrivers[6].init(DEV_ADDRESS7, LED_BRIGHTNESS);
+  // ledDrivers[7].init(DEV_ADDRESS8, LED_BRIGHTNESS);
+  // ledDrivers[8].init(DEV_ADDRESS9, LED_BRIGHTNESS);
 }
 
 void loop()
 {
-  for(uint8_t i = 0; i < CONTROL_LEDS; i++){
-    onLED(i);
+  /*********************** PWM control demo *************************************/
+  uint8_t pattern[PCA9965_NUM_LEDS];
+  for (uint8_t i = 0; i < 255; i++)
+  {
+    uint8_t val = (uint8_t)(-cos((float)i / 255 * PI * 2) * 128) + 128;
+    for (uint8_t j = 0; j < PCA9965_NUM_LEDS; j++)
+    {
+      pattern[j] = val;
+    }
+    ledDrivers[0].setLEDPattern(pattern);
+    val = (uint8_t)(cos((float)i / 255 * PI * 2) * 128) + 128;
+    for (uint8_t j = 0; j < PCA9965_NUM_LEDS; j++)
+    {
+      pattern[j] = val;
+    }
 
-    delay(1000);
+    ledDrivers[1].setLEDPattern(pattern);
+    delay(10);
+  }
 
-    offLED(i);
+  /*********************** simple ON-OFF control demo *************************************/
+  for (uint8_t i = 0; i < PCA9965_NUM_LEDS; i++)
+  {
+    ledDrivers[0].onLED(i);
+    // ledDriver.onLED(i);
+    ledDrivers[1].onLED(PCA9965_NUM_LEDS - i - 1);
+    // ledDrivers[2].onLED(i);
+    // ledDrivers[3].onLED(i);
+    // ledDrivers[4].onLED(i);
+    // ledDrivers[5].onLED(i);
+    // ledDrivers[6].onLED(i);
+    // ledDrivers[7].onLED(i);
+    // ledDrivers[8].onLED(i);
+
+#ifdef M5ATOM
+    if (blink)
+      M5.dis.drawpix(0, 0x000000);
+    else
+      M5.dis.drawpix(0, 0xf00000);
+    blink = !blink;
+#endif
+
+    delay(500);
+
+    ledDrivers[0].offLED(i);
+    // ledDriver.offLED(i);
+    ledDrivers[1].offLED(PCA9965_NUM_LEDS - i - 1);
+    // ledDrivers[2].offLED(i);
+    // ledDrivers[3].offLED(i);
+    // ledDrivers[4].offLED(i);
+    // ledDrivers[5].offLED(i);
+    // ledDrivers[6].offLED(i);
+    // ledDrivers[7].offLED(i);
+    // ledDrivers[8].offLED(i);
   }
 }
