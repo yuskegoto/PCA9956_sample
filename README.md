@@ -1,4 +1,7 @@
+
 # PCA9956 sample Code for Arduino
+**This repository is nolonger updated. Active library is here: [https://github.com/yuskegoto/PCA9956](https://github.com/yuskegoto/PCA9956)**
+
 This is Arduino code sample for I2C controlled LED driver PCA9956. The chips is capable to handle 24 channels of LEDs, however there is practically **NO** sample code nor information except this rather incomplehensible [datasheet](https://www.nxp.com/docs/en/data-sheet/PCA9956B.pdf). So I hope this code can help someone who are struggling now to understand this guy. I have tested this code with [Switchscience's breakout board](https://www.switch-science.com/catalog/2677/). When all three address setting pins of PCA9956 are open state, the i2c address will be 0x3F. 
 
 i2cLEDドライバー、PCA9956のArduino用サンプルコードです。24チャンネル制御できるとても便利なICなのですが、サンプルコードが全然見つからず、[データシート](https://www.nxp.com/docs/en/data-sheet/PCA9956B.pdf)もとても分かりにくいものでしたので、ご参考になればと思います。[スイッチサイエンス製の評価ボード](https://www.switch-science.com/catalog/2677/)にて動作を確認しています。アドレス設定ピン3本すべてオープン（未接続）の場合は、Ox3Fです。
@@ -7,12 +10,6 @@ i2cLEDドライバー、PCA9956のArduino用サンプルコードです。24チ�
 [Device data-sheet / デバイスのデータシートはこちら](https://www.switch-science.com/catalog/2677/)
 
 [Product page of Switchscience / Switch Scienceの商品ページ](https://www.switch-science.com/catalog/2677/)
-
-
-## library
-PCA9965 library is now available.
-[https://github.com/yuskegoto/PCA9956](https://github.com/yuskegoto/PCA9956)
-
 
 ## Procedure つなぎ方
 
